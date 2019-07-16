@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -7,14 +8,14 @@ const bodyParser = require('body-parser');
 const routes_render = require('./routes/render');
 
 var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('port', process.env.PORT || 3000);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true})); 
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -36,4 +37,27 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
+
+// if (process.env.VCAP_SERVICES) {
+//   var env = JSON.parse(process.env.VCAP_SERVICES);
+// if (env['dashDB For Transactions']) {
+//       hasConnect = true;
+//   db2 = env['dashDB For Transactions'][0].credentials;
+// }
+// }
+
+// if ( hasConnect == false ) {
+
+//  db2 = {
+//       db: "BLUDB",
+//       hostname: "xxxx",
+//       port: 50000,
+//       username: "xxx",
+//       password: "xxx"
+//    };
+// }
+
+// var connString = "DRIVER={DB2};DATABASE=" + db2.db + ";UID=" + db2.username + ";PWD=" + db2.password + ";HOSTNAME=" + db2.hostname + ";port=" + db2.port;
