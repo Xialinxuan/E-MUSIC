@@ -3,5 +3,6 @@ const search = require('./search');
 
 module.exports = {
     "fetchLyricInJson": lyrics.fetchLyricInJson,
-    "searchSong": search.searchSong
+    "searchSong": search.searchSong,
+    "lyricProcess": lyrics.lyricProcess
 };
