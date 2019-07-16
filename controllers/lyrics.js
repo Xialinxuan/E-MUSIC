@@ -1,26 +1,23 @@
-const apiUrl = "https://api.imjad.cn/cloudmusic/?type=lyric&id="
+const apiUrl = "https://cloud-first-xlx.mybluemix.net/lyric?id="
 const https = require('https');
+const fetch = require('node-fetch');
 
-function fetchLyricInJson(songID, callback){
-    let strID = "" + songID;    //如果songID是数值必须这样处理
-    https.get(apiUrl + strID, function(ret){
-        let totalData = '';
-        ret.setEncoding('utf8');
-        ret.on('data',function(data){
-            totalData += data;
+async function fetchLyricInJson(songID, callback){
+    let strID = '' + songID;    //如果songID是数值必须这样处理
+    let lyric = {};
+    let flag = 0;
+    for (let index = 0; index < 6; index++) {
+        await fetch(apiUrl + strID).then(res => res.json()).then(json => {
+            lyric = json;
+            flag = 1;
+        }).catch(err => {
+            console.log(err);
         });
-        ret.on('end', ()=>{
-            try {
-                if (ret.statusCode != 401 && ret.statusCode != 400 && totalData) {
-                    totalData = JSON.parse(totalData);
-                    callback(undefined, totalData);   //totalData.lrc.lyric就是字符串了
-                }
-            } catch(err) {
-                callback(err);
-            }
-        });
-    })
+        if(flag) break;
+    }
+    callback(undefined, lyric.lrc.lyric);
 }
+
 
 module.exports = {
     "fetchLyricInJson": fetchLyricInJson

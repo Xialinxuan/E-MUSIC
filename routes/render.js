@@ -2,7 +2,17 @@ const controllers = require('../controllers');
 
 function route(app) {
   app.all('/', function (req, res) {
-    controllers.fetchLyricInJson(347230,function(err, lyricData){
+      // let songName = encodeURI("海阔天空")
+      // controllers.searchSong(songName,function(err,result){
+      //   if(err) {
+      //     console.log(err);
+      //     res.status(400).end();
+      //   } else{
+      //     console.log(result.id);
+      //     res.render('index');
+      //   }
+      // });
+    controllers.fetchLyricInJson(1377544581,function(err, lyricData){
       if(err) {
         console.log(err);
         res.status(400).end();
