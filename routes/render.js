@@ -12,7 +12,7 @@ function route(app) {
       //     res.render('index');
       //   }
       // });
-    controllers.fetchLyricInJson(1377544581,function(err, lyricData){
+    controllers.fetchLyricInJson(1375986963,function(err, lyricData){
       if(err) {
         console.log(err);
         res.status(400).end();
