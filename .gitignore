@@ -1,2 +1,4 @@
 node_modules
-/controllers/service.js
+manifest.yml
+controllers/service.js
+models/config.js

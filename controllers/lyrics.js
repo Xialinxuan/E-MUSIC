@@ -1,25 +1,26 @@
-const apiUrl = "https://cloud-first-xlx.mybluemix.net/lyric?id="
-const https = require('https');
+const apiUrl = "https://myneteasecloudmusicapi.us-east.mybluemix.net/lyric?id="
 const fetch = require('node-fetch');
+const maxRequest = 15
 
 async function fetchLyricInJson(songID, callback){
     let strID = '' + songID;    //如果songID是数值必须这样处理
     let lyric = {};
     let flag = 0;
-    for (let index = 0; index < 6; index++) {
+    for (let index = 0; index < maxRequest; index++) {
         await fetch(apiUrl + strID).then(res => res.json()).then(json => {
             lyric = json;
             flag = 1;
         }).catch(err => {
-            console.log(err);
+            console.log(err + " The song id is " + strID + "with " + index + " times request");
+        }).catch(err => {
+            console.log(err + " The song id is " + strID + "with " + index + " times request");
         });
         if(flag) break;
     }
-    callback(undefined, lyric);
+    callback(undefined, lyric, songID);
 }
 
-function lyricProcess(lyric)
-{
+function lyricProcess(lyric, callback){
     var pattern = /\[\d{2}:\d{2}.\d+\]/g;
     var lyricInfo = lyric;
     var lines = lyricInfo.split("\n");
@@ -35,7 +36,6 @@ function lyricProcess(lyric)
 		var lyricMessage = lines[0].replace(artistPattern, "").slice(0, -1);
 		lyricMessage.length > 0 ? lyricArtistMessage.push(lyricMessage) : 0;
         lines = lines.splice(1);
-        //console.log(lines);
     }
 
     lines[lines.length - 1].length == 0 && lines.pop()
@@ -61,10 +61,7 @@ function lyricProcess(lyric)
 	lyricResult.sort(function(a, b) {
 		return a[0] - b[0];
 	});
-    for(var i = 0 ;i<lyricResult.length; i++){
-        console.log(lyricResult[i]);
-    }
-
+    callback(undefined, lyricResult);
 }
 
 

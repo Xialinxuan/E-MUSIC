@@ -1,4 +1,14 @@
+
+
 # E-MUSIC
+
+### 2019-7-18
+
+- 添加对数据库操作，启动前修改/models/config-example.js文件为config.js，具体内容应该不需要修改，因为暂时无需使用数据库
+- 启动前需执行npm install以安装包
+- 修改了package.json的内容，现在喜欢使用npm start的同学可以用这种方式启动了，node app.js仍然支持
+- 添加了更多查询歌曲信息的操作
+- 更换了API的URL接口，因为老的URL被封杀了
 
 ### 2019-7-16
 

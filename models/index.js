@@ -1,2 +1,6 @@
-const ibm_db = require('ibm_db')
+const operation = require('./operation')
 
+module.exports = {
+    "insert": operation.insert,
+    "selectforbuild": operation.selectforbuild
+}

@@ -26,6 +26,17 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+// app.enable('trust proxy');
+
+// app.use (function (req, res, next) {
+//   if (req.secure || process.env.BLUEMIX_REGION === undefined) {
+//     next();
+//   } else {
+//     console.log('redirecting to https');
+//     res.redirect('https://' + req.headers.host + req.url);
+//   }
+// })
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
@@ -41,16 +52,17 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+// let db2;
+// let hasConnect = false;
 // if (process.env.VCAP_SERVICES) {
 //   var env = JSON.parse(process.env.VCAP_SERVICES);
-// if (env['dashDB For Transactions']) {
+// if (env['dashDB']) {
 //       hasConnect = true;
-//   db2 = env['dashDB For Transactions'][0].credentials;
+//   db2 = env['dashDB'][0].credentials;
 // }
 // }
 
 // if ( hasConnect == false ) {
-
 //  db2 = {
 //       db: "BLUDB",
 //       hostname: "xxxx",
@@ -60,4 +72,4 @@ http.createServer(app).listen(app.get('port'), function(){
 //    };
 // }
 
-// var connString = "DRIVER={DB2};DATABASE=" + db2.db + ";UID=" + db2.username + ";PWD=" + db2.password + ";HOSTNAME=" + db2.hostname + ";port=" + db2.port;
+//const connString = "DRIVER={DB2};DATABASE=" + db2.db + ";UID=" + db2.username + ";PWD=" + db2.password + ";HOSTNAME=" + db2.hostname + ";port=" + db2.port;

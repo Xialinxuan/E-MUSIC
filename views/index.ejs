@@ -221,9 +221,9 @@ $(document).ready(function(){
 			            </div>
 			        </nav>
 				</div>-->
-	   <div style="margin-left: 400px; text-align: center; background-color: rgba(255,255,255,0); width: 380px; border-radius: 10px; position: absolute; z-index: 999">
-		   <img src="/images/logo透明.png" alt="" height="100">
-	   </div>
+<!--	   <div style="margin-left: 25%; text-align: center; background-color: rgba(255,255,255,0); width: 30%; border-radius: 10px; position: absolute; z-index: 999">-->
+			<img src="/images/logo透明.png" alt="" style="width: 35%; margin-left: 33%">
+<!--	   </div>-->
 <!--				<div class="search-block1" style="width: 200px; height: 60px; position: relative; z-index: 999">-->
 
 		<!--creative search button-->
@@ -236,15 +236,15 @@ $(document).ready(function(){
 		</div>-->
 
 		<!--search box-->
-		<div class="serch1" style="border-style: inset; margin-left: 1000px; width: 180px; height: 50px; position: relative; z-index: 999">
+<!--		<div class="serch1" style="border-style: inset; margin-left: 1000px; width: 180px; height: 50px; position: relative; z-index: 999">-->
+		<div class="serch1">
 			<form>
 				<input type="submit" value="" >
-				<input type="text" style="border-radius: 5px; font-size: 0.5em; width: 100px" placeholder="Search">
+				<input type="text" placeholder="Search">
 <!--				<input type="text" style="border-radius: 5px; font-size: 0.5em; width: 100px" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}" >-->
 			</form>
 		</div>
 <!--				</div>-->
-					<div class="clearfix"> </div>
 <!--	        </div>-->
 		<div class="clearfix"> </div>
 <!--	   </div>-->
@@ -457,7 +457,7 @@ $(document).ready(function(){
 <!--   <div class="part-2">-->
 <!--block-5 strat here-->
 <!--   	 <div class="block-5">-->
-   	 	<div class="col-md-10" style="margin-left: 100px">
+   	 	<div class="col-md-10" style="margin: 0 10% 0 10%">
    	 	   <!--<div class="farm">
    	 	   	 <form>
    	 	   	   <input class="disc" type="text" value="Disable Form" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Disable Form';}">
@@ -528,7 +528,7 @@ $(document).ready(function(){
 			   </div>
 
 			   <script>
-					<!--bar chart js-->
+				   //bar chart js
 				   $(function() {
 					   $("#chart #bars li .bar").each( function( key, bar ) {
 						   var percentage = $(this).data('percentage');
@@ -590,15 +590,16 @@ $(document).ready(function(){
    	 	   	  <div class="audio-ply-1">
    	  	          <div class="audio-top">
 						<!---->
-					  <div style="float: left">
-						  <img src="/images/jay-chou.jpg" height="100">
-					  </div>
-						<div class="audio-player" style="margin-left: 100px">
+<!--					  <div style="float: left; margin-left: 0">-->
+						  <img src="/images/jay-chou.jpg" style="float: left; width: 15%; height: 15%; margin-left: 0">
+<!--					  </div>-->
+						<div class="audio-player" style="margin-left: 15%">
 							<audio id="audio-player" controls="controls">
-							    <source src="../media/Blue Browne.ogg" type="audio/ogg"></source>
-								<source src="../media/Blue Browne.mp3" type="audio/mpeg"></source>
-							    <source src="../media/Georgia.ogg" type="audio/ogg"></source>
-							    <source src="../media/Georgia.mp3" type="audio/mpeg"></source>
+								<source src="http://m8.music.126.net/20190717172158/c38b0fa02eff18eeadd98c8e3220e4f1/ymusic/b1c4/b5de/74d0/9158ae4873e10b743790320db9ef9b29.mp3" type="audio/mpeg"></source>
+<!--							    <source src="../media/Blue Browne.ogg" type="audio/ogg"></source>-->
+<!--								<source src="../media/Blue Browne.mp3" type="audio/mpeg"></source>-->
+<!--							    <source src="../media/Georgia.ogg" type="audio/ogg"></source>-->
+<!--							    <source src="../media/Georgia.mp3" type="audio/mpeg"></source>-->
 							</audio>
 						</div>
 						<!---->
@@ -687,9 +688,10 @@ $(document).ready(function(){
    	 	<div class="clearfix"> </div>
 
 	<!--recommend button-->
-	<div class="row">
-		<label class="recommend-label">Recommendation?</label>
-		<div class="recommend-button"></div>
+	<div class="row" style="position: relative">
+		<div class="recommend-button">
+			<label class="recommend-label">Recommendation?</label>
+		</div>
 	</div>
 
 <!-- script for the recommend button -->
@@ -711,68 +713,131 @@ $(document).ready(function(){
 	</script>
 
 	<!--recommend songs-->
-	<div id="show1" class="row" style="float: left; display: none">
-			<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
+	<div id="show1" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+			<div class="song-box">
 				<div class="song-img1">
 					<h4>不能说的秘密</h4>
-<!--					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>-->
-					<img src="/images/jay-chou.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-					<!--<div class="block-rit-btn">
-                        <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                    </div>-->
+<!--					<div style="float: left"><img src="/images/jay-chou.jpg" alt=""></div>-->
+					<!--play button-->
+					<a class="video-play-button">
+						<span class="video-play-outline">
+							<img src="/images/jay-chou.jpg" alt="">
+						</span>
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							 viewBox="0 0 104 104" enable-background="new 0 0 104 104" xml:space="preserve">
+							<path fill="none" stroke="#FFFFFF" stroke-width="4" stroke-miterlimit="10" d="M26,35h52L52,81L26,35z"/>
+							<circle class="video-play-circle" fill="none" stroke="#DA3D25" stroke-width="4" stroke-miterlimit="10" cx="52" cy="52" r="50"/>
+						</svg>
+					</a>
 				</div>
 			</div>
-			<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
+			<div class="song-box">
 				<div class="song-img1">
 					<h4>七里香</h4>
-<!--					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>-->
-					<img src="/images/jay-chou.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-					<!--<div class="block-rit-btn">
-                        <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                    </div>-->
+					<img src="/images/jay-chou.jpg" alt="">
 				</div>
 			</div>
-		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
+		<div class="song-box">
 			<div class="song-img1">
 				<h4>她说</h4>
-				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>
-				<img src="/images/lin.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
-                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
-			</div>
-		</div>
-		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
-			<div class="song-img1">
-				<h4>记得</h4>
-				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>
-				<img src="/images/lin.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
-                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
+				<img src="/images/jay-chou.jpg" alt="">
 			</div>
 		</div>
 	</div>
 
-	<div id="show2" class="row" style="float: left; margin-top: 50px; display: none">
+	<!--<div id="show2" class="row" style="float: left; display: none">
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>不能说的秘密</h4>
+				&lt;!&ndash;					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
+				<img src="/images/jay-chou.jpg" alt="">
+				&lt;!&ndash;<div class="block-rit-btn">
+                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
+                </div>&ndash;&gt;
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>七里香</h4>
+				&lt;!&ndash;					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
+				<img src="/images/jay-chou.jpg" alt="">
+				&lt;!&ndash;<div class="block-rit-btn">
+                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
+                </div>&ndash;&gt;
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>她说</h4>
+				&lt;!&ndash;				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
+				<img src="/images/lin.jpg" alt="">
+				&lt;!&ndash;<div class="block-rit-btn">
+                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
+                </div>&ndash;&gt;
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>记得</h4>
+				&lt;!&ndash;				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
+				<img src="/images/lin.jpg" alt="">
+				&lt;!&ndash;<div class="block-rit-btn">
+                    <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
+                </div>&ndash;&gt;
+			</div>
+		</div>
+	</div>-->
+	<div id="show2" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>不能说的秘密</h4>
+				<!--					<div style="float: left"><img src="/images/jay-chou.jpg" alt=""></div>-->
+				<!--play button-->
+				<a class="video-play-button">
+						<span class="video-play-outline">
+							<img src="/images/jay-chou.jpg" alt="">
+						</span>
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						 viewBox="0 0 104 104" enable-background="new 0 0 104 104" xml:space="preserve">
+							<path fill="none" stroke="#FFFFFF" stroke-width="4" stroke-miterlimit="10" d="M26,35h52L52,81L26,35z"/>
+						<circle class="video-play-circle" fill="none" stroke="#DA3D25" stroke-width="4" stroke-miterlimit="10" cx="52" cy="52" r="50"/>
+						</svg>
+				</a>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>七里香</h4>
+				<img src="/images/jay-chou.jpg" alt="">
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>她说</h4>
+				<img src="/images/jay-chou.jpg" alt="">
+			</div>
+		</div>
+	</div>
+
+	<!--<div id="show2" class="row" style="float: left; margin-top: 50px; display: none">
 		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
 			<div class="song-img1">
 				<h4>不能说的秘密</h4>
-				<!--					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>-->
+				&lt;!&ndash;					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
 				<img src="/images/jay-chou.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
+				&lt;!&ndash;<div class="block-rit-btn">
                     <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
+                </div>&ndash;&gt;
 			</div>
 		</div>
 		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
 			<div class="song-img1">
 				<h4>七里香</h4>
-				<!--					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>-->
+				&lt;!&ndash;					<span style="height: 100%; display: inline-block; vertical-align: middle"></span>&ndash;&gt;
 				<img src="/images/jay-chou.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
+				&lt;!&ndash;<div class="block-rit-btn">
                     <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
+                </div>&ndash;&gt;
 			</div>
 		</div>
 		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
@@ -780,9 +845,9 @@ $(document).ready(function(){
 				<h4>她说</h4>
 				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>
 				<img src="/images/lin.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
+				&lt;!&ndash;<div class="block-rit-btn">
                     <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
+                </div>&ndash;&gt;
 			</div>
 		</div>
 		<div class="col-lg-2 col-md-2 song-box" style="margin-left: 50px">
@@ -790,12 +855,12 @@ $(document).ready(function(){
 				<h4>记得</h4>
 				<span style="height: 100%; display: inline-block; vertical-align: middle"></span>
 				<img src="/images/lin.jpg" alt="" height="100%" width="100%" style="vertical-align: middle">
-				<!--<div class="block-rit-btn">
+				&lt;!&ndash;<div class="block-rit-btn">
                     <a class="popup-with-zoom-anim" href="#small-dialog1">Order Now</a>
-                </div>-->
+                </div>&ndash;&gt;
 			</div>
 		</div>
-	</div>
+	</div>-->
 
 		<!--   	 </div>-->
    	 <!--<div class="slid-images">

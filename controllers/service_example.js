@@ -23,6 +23,60 @@ function analyzeEmotion(text, callback){
     });
 }
 
+function build(){
+  models.selectforbuild(function(err,result){
+    if(err){
+      console.log(err);
+    }else{
+      let data;
+      let dataSet = new Array();
+      while(data = result.fetchSync()){
+        dataSet.push(data.id);
+      }
+      for (let index = 0; index < dataSet.length; index++) {
+        const id = dataSet[index];
+        lyrics.fetchLyricInJson(id,function(err, lyricData, ID){
+          if(err){
+            console.log(err);
+          }else{
+            if(lyricData && lyricData.lrc && lyricData.lrc.lyric){
+              lyrics.lyricProcess(lyricData.lrc.lyric,function(err, lyricResult){
+                let lyric;
+                if(err){
+                  console.log(err);
+                }else{
+                  for (let index = 0; index < lyricResult.length; index++) {
+                    const element = lyricResult[index][1];
+                    if(element.length) lyric += element;
+                  }
+                  analyzeEmotion(lyric,function(err,analysisResults){
+                    if(err){
+                      console.log(err);
+                      console.log("The song id is " + ID)
+                    }else{
+                      let params = new Array();
+                      params.push(ID);
+                      params.push(analysisResults.emotion.document.emotion.sadness);
+                      params.push(analysisResults.emotion.document.emotion.joy);
+                      params.push(analysisResults.emotion.document.emotion.fear);
+                      params.push(analysisResults.emotion.document.emotion.disgust);
+                      params.push(analysisResults.emotion.document.emotion.anger);
+                      models.insert(params);
+                    }
+                  })
+                }
+              });
+            }else{
+              console.log("Cannot find the lyric of This song " + ID);
+            }
+          }
+        });
+      }
+    }
+  });
+}
+
 module.exports = {
-    "analyzeEmotion": analyzeEmotion
+  "analyzeEmotion": analyzeEmotion,
+  "build": build
 }
