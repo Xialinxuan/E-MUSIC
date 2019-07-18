@@ -11,5 +11,8 @@ module.exports = {
     "analyzeEmotion": service.analyzeEmotion,
     "build": service.build,
     "detailSong": detail.detailSong,
-    "mp3url": mp3url.mp3url
+    "mp3url": mp3url.mp3url,
+    "recommend": service.recommend,
+    "detailSongs": detail.detailSongs,
+    "analyzeEmotionBySession": service.analyzeEmotionBySession
 };

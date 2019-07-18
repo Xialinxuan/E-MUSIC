@@ -1,9 +1,9 @@
 const apiUrl = "https://myneteasecloudmusicapi.us-east.mybluemix.net/lyric?id="
 const fetch = require('node-fetch');
-const maxRequest = 15
+const maxRequest = 100
 
 async function fetchLyricInJson(songID, callback){
-    let strID = '' + songID;    //如果songID是数值必须这样处理
+    let strID = '' + songID;
     let lyric = {};
     let flag = 0;
     for (let index = 0; index < maxRequest; index++) {
@@ -21,6 +21,7 @@ async function fetchLyricInJson(songID, callback){
 }
 
 function lyricProcess(lyric, callback){
+
     var pattern = /\[\d{2}:\d{2}.\d+\]/g;
     var lyricInfo = lyric;
     var lines = lyricInfo.split("\n");
@@ -36,6 +37,7 @@ function lyricProcess(lyric, callback){
 		var lyricMessage = lines[0].replace(artistPattern, "").slice(0, -1);
 		lyricMessage.length > 0 ? lyricArtistMessage.push(lyricMessage) : 0;
         lines = lines.splice(1);
+        //console.log(lines);
     }
 
     lines[lines.length - 1].length == 0 && lines.pop()
@@ -61,7 +63,31 @@ function lyricProcess(lyric, callback){
 	lyricResult.sort(function(a, b) {
 		return a[0] - b[0];
 	});
-    callback(undefined, lyricResult);
+
+    lyricEmotion=new Array();
+    var timeinterval=0;
+    var currentime=0;
+    var lyricsum="";
+    for(var i=0,j=0; i<lyricResult.length-1; i++){
+        var lineinterval=lyricResult[i+1][0]-lyricResult[i][0];
+        timeinterval+=lineinterval;
+        if(timeinterval>10){
+            currentime=lyricResult[i][0];
+            var k;
+            if(j==0)
+            k=0;
+            for(var m=k;m<=i;m++){
+                lyricsum=lyricsum+" "+lyricResult[m][1];
+            }
+            j++;
+            timeinterval=0;
+            k=i+1;
+            lyricEmotion.push([currentime,lyricsum]);
+            lyricsum="";
+        }
+        
+    }
+    callback(undefined,lyricResult,lyricEmotion);
 }
 
 

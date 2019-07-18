@@ -5,7 +5,7 @@ async function detailSong(songId, callback){
     let ret = {};
     let flag = 0;
     for (let index = 0; index < 6; index++) {
-        await fetch(apiUrl + songId ).then(res => res.json()).then(json => {
+        await fetch(apiUrl + songId).then(res => res.json()).then(json => {
             detail = json;
             flag = 1;
         }).catch(err => {
@@ -17,6 +17,23 @@ async function detailSong(songId, callback){
     callback(undefined, detail.songs[0])
 }
 
+async function detailSongs(songId, callback){
+    let ret = {};
+    let flag = 0;
+    for (let index = 0; index < 6; index++) {
+        await fetch(apiUrl + songId).then(res => res.json()).then(json => {
+            detail = json;
+            flag = 1;
+        }).catch(err => {
+            console.log(err);
+        });
+        if(flag) break;
+    }
+
+    callback(undefined, detail.songs)
+}
+
 module.exports = {
-    "detailSong": detailSong
+    "detailSong": detailSong,
+    "detailSongs": detailSongs
 }
