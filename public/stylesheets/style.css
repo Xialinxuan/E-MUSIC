@@ -4317,10 +4317,12 @@ body {
         text-align: right;
         padding-right: 1em;
         list-style: none;
-        height: 29px;
-        border-bottom: 1px solid #444;
+        /*height: 29px;*/
+        height: 20%;
+        /*border-bottom: 1px solid #444;*/
         position: relative;
         bottom: 30px;
+        /*bottom: 40%;*/
     }
 
         #chart li:last-child {
@@ -4379,8 +4381,8 @@ body {
     }
 
     #chart #bars li .bar:hover:before {
-         color: white;
-         content: attr(data-percentage) '%';
+         color: #000000;
+         /*content: attr(data-percentage) '%';*/
          font-size: 15px;
          position:relative;
          bottom: 20px;
@@ -4391,10 +4393,12 @@ body {
         color: #55a9ed;
         width: 100%;
         position: absolute;
-        bottom: -2em;
+        /*top: 1em;*/
+        bottom: -1.5em;
+        /*bottom: 0;*/
         left: 0;
         text-align: center;
-        font-size: 0.1em;
+        font-size: 0.5em;
         z-index: 999;
     }
 
