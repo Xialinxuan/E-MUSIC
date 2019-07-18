@@ -1,13 +1,16 @@
 /** audio player styles **/
 .audio-player, .audio-player div,.audio-player button {
+  /*margin: 3% 40% 10% 10%;*/
   margin: 0;
   padding: 0;
   border: none;
   outline: none;
 }
 div.audio-player {
+  font-size: 0.5em;
+  font-family: Verdana;
   position: relative;
-  width: 80% !important;
+  width: 100% !important;
   height: 50px !important;
   margin: 0 auto;
 }
@@ -19,22 +22,28 @@ div.audio-player {
   text-indent: -9999px;
 }
 .mejs-controls .mejs-play button, .mejs-controls .mejs-pause button {
-    width: 26px;
-    height: 26px;
-    top: 45px;
-    left: 60px;
-    background: transparent url('../images/play.png') -2px 1px no-repeat;
-    z-index: 1;
+  /*width: 3%;*/
+  /*height: 47%;*/
+  /*top: 50%;*/
+  /*left: 5%;*/
+  /*background: transparent url('../images/play.png') no-repeat;*/
+  /*z-index: 999;*/
+  width: 26px;
+  height: 26px;
+  top: 45px;
+  left: 60px;
+  /*background: transparent url('../images/play.png') -2px 1px no-repeat;*/
+  z-index: 1;
 }
 .mejs-controls .mejs-pause button { 
-	background-position:-2px -37px; 
+  background-position:-2px -37px;
 }
-/* mute/unmute control */
+/* mute/unmute control声音调节图标 */
 .mejs-controls .mejs-mute button, .mejs-controls .mejs-unmute button {
   width: 18px;
   height: 19px;
   top: 45px;
-  right: 92px;
+  right: 38%;
   background: transparent url('../images/img-sprite.png') no-repeat -181px -23px;
 }
 
@@ -42,7 +51,9 @@ div.audio-player {
 .mejs-controls div.mejs-horizontal-volume-slider {
   position: absolute;
   top: 13px;
-  right: 15px;
+  /*right: 15px;*/
+  /*right: 50%;*/
+  left: 65%;
   cursor: pointer;
 }
 /* time scrubber bar */
