@@ -39,7 +39,6 @@ function lyricProcess(lyric, callback){
         lines = lines.splice(1);
         //console.log(lines);
     }
-
     lines[lines.length - 1].length == 0 && lines.pop()
     while(testChinese.test(lines[0]))
     {
@@ -62,8 +61,8 @@ function lyricProcess(lyric, callback){
     //将结果按照时间排序
 	lyricResult.sort(function(a, b) {
 		return a[0] - b[0];
-	});
-
+    });
+    
     lyricEmotion=new Array();
     var timeinterval=0;
     var currentime=0;

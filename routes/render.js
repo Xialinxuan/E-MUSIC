@@ -1,6 +1,6 @@
 const controllers = require('../controllers');
 //const models = require('../models');
-const requiredRecentNum = 5;
+const requiredRecentNum = 1;
 let recentEmotionList = new Array();
 
 function route(app) {
@@ -20,61 +20,58 @@ function route(app) {
         res.status(400).end();
       } else{
         let songId=songResult.id;
-        controllers.mp3url(songId,function(err,result){
+        controllers.check(songId, function(err, flag){
           if(err){
             console.log(err);
-            res.status(400).end();
-          } else{
-              songUrl = result.url;
-          }
-        });
-        controllers.detailSong(songId, function (err, detail) {
-          if(err){
-              console.log(err);
-          }
-          else {
-              songDetail = detail;
-              controllers.fetchLyricInJson(songId,function(err, lyricData){
-                if(err) {
-                    console.log(err);
-                    res.status(400).end();
-                } else {
-                    if(lyricData.nolyric){
-                      code = 0;
-                      res.send({songUrl: songUrl, songResult: songResult, detail: songDetail, code: code})
-                    }
-                    controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
-                        if(err){
-                            console.log(err);
-                        }
-                        else{
-                            let lyric = '';
-                            for(let index = 0; index < lyricResult.length; index++){
-                              const element = lyricResult[index][1];
-                              if(element.length) lyric += element;
-                            }
-                            controllers.analyzeEmotion(lyric, function(err, analysisResults){
-                              if(err){
-                                console.log(err)
-                              }else{
-                                if(recentEmotionList.length < 5){
-                                  recentEmotionList.push(analysisResults.emotion.document.emotion);
-                                }else{
-                                  recentEmotionList.shift();
-                                  recentEmotionList.push(analysisResults.emotion.document.emotion);
-                                }
-                                console.log(recentEmotionList);
-                              }
-                            })
-                            code = 1;
-                            songLyric = lyricResult;
-                            res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult, detail: songDetail, code: code});
-                        }
-                    });
+          }else{
+            if(flag){
+              controllers.mp3url(songId,function(err,result){
+                if(err){
+                  console.log(err);
+                  res.status(400).end();
+                } else{
+                    songUrl = result.url;
                 }
-            });
+              });
+              controllers.detailSong(songId, function (err, detail) {
+                if(err){
+                    console.log(err);
+                }
+                else {
+                    songDetail = detail;
+                    controllers.fetchLyricInJson(songId,function(err, lyricData){
+                      if(err) {
+                          console.log(err);
+                          res.status(400).end();
+                      } else {
+                          if(lyricData.uncollected != undefined && lyricData.uncollected == true){
+                            res.send({code: -3});   //网易云未收录
+                          }else if(lyricData.nolyric){
+                            code = 0;
+                            res.send({songUrl: songUrl, songResult: songResult, detail: songDetail, code: code});
+                          }else if(lyricData.tlyric.lyric == undefined){
+                            res.send({code: -1});   //中文歌
+                          }else{
+                            controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
+                              if(err){
+                                  console.log(err);
+                              }
+                              else{
+                                  code = 1;
+                                  songLyric = lyricResult;
+                                  res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult, detail: songDetail, code: code});
+                              }
+                            });
+                          }
+                      }
+                  });
+                }
+              });
+            }else{
+              res.send({code: -2});   //无版权
+            }
           }
-        });
+        })
       }
     });
   })
@@ -92,14 +89,35 @@ function route(app) {
               console.log(err);
               res.status(400).end();
           } else {
-              if(lyricData.nolyric){
-                res.send({code: 0});
+              if(lyricData.uncollected != undefined && lyricData.uncollected == true){
+                res.send({code: -3});
+              }else if(lyricData.nolyric){
+                res.send({code: 0})
+              }else if(lyricData.tlyric.lyric == undefined){
+                res.send({code: -1});   //中文歌
               }else{
                 controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
                   if(err){
                       console.log(err);
                   }
                   else{
+                    let lyric = '';
+                    for(let index = 0; index < lyricResult.length; index++){
+                      const element = lyricResult[index][1];
+                      if(element.length) lyric += element;
+                    }
+                    controllers.analyzeEmotion(lyric, function(err, analysisResults){
+                      if(err){
+                        console.log(err)
+                      }else{
+                        if(recentEmotionList.length < requiredRecentNum){
+                          recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                        }else{
+                          recentEmotionList.shift();
+                          recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                        }
+                      }
+                    });
                       let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
                       res.send({emotionResult: emotionResult, code: 1});
                   }
@@ -112,41 +130,51 @@ function route(app) {
   })
 
   app.all('/recommend', (req,res) => {
-    if(recentEmotionList.length > requiredRecentNum){
+    if(recentEmotionList.length < requiredRecentNum){
       res.send({code: 0});
     }else{
       let sadness=0, joy=0, fear=0, disgust=0, anger=0;
       for (let index = 0; index < requiredRecentNum; index++) {
         const element = recentEmotionList[index];
-        sadness += element.sadness;
-        joy += element.joy;
-        fear += element.fear;
-        disgust += element.disgust;
-        anger += element.anger;
+        sadness += element[1].sadness;
+        joy += element[1].joy;
+        fear += element[1].fear;
+        disgust += element[1].disgust;
+        anger += element[1].anger;
       }
       controllers.recommend([sadness/(requiredRecentNum * 1.0),joy/(requiredRecentNum * 1.0),fear/(requiredRecentNum * 1.0),disgust/(requiredRecentNum * 1.0),anger/(requiredRecentNum * 1.0)], function(err, idSet){
         if(err){
           console.log(err);
         }else{
           let idStr = '';
-          for (let index = 0; index < idSet.length; index++) {
+          let count = 0;
+          for (let index = 0; index < idSet.length && count < 6; index++) {
             const element = idSet[index];
-            if(index == idSet.length - 1){
+            let flag = 0;
+            for(let i = 0;i < requiredRecentNum; i++){
+              if(element == recentEmotionList[i][0]) {
+                flag = 1;
+                break;
+              }
+            }
+            if(flag) continue;
+            if(count == 5){
               idStr += element;
             }else{
               idStr = idStr + element + ',';
             }
+            count++;
           }
           controllers.detailSongs(idStr,function(err, result){
             if(err){
               console.log(err);
             }else{
-              let recommedSongs = new Array();
+              let recommendSongs = new Array();
               for (let index = 0; index < result.length; index++) {
                 const element = result[index];
-                recommedSongs.push([element.name, element.al.picUrl]);
+                recommendSongs.push([element.name, element.al.picUrl]);
               }
-              res.send({recommedSongs: recommedSongs, code: 1});
+              res.send({recommendSongs: recommendSongs, code: 1});
             }
           });
         }
@@ -155,6 +183,5 @@ function route(app) {
   });
 
 }
-
 
 module.exports = route;

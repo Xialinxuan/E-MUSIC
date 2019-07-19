@@ -95,7 +95,7 @@ function clean(){
 function selectForRecommend(param, callback){
     let conn = connect.getConn().conn;
     if(conn){
-        conn.prepare('SELECT ID, (POWER(SADNESS - ? , 2) + POWER(JOY - ? , 2) + POWER(FEAR - ? , 2) + POWER(DISGUST - ? , 2) + POWER(ANGER - ? , 2)) AS DISTANCE FROM DASH6609.EMOTIONSTATS ORDER BY DISTANCE FETCH FIRST 6 ROWS ONLY', function(err, stmt){
+        conn.prepare('SELECT ID, (POWER(SADNESS - ? , 2) + POWER(JOY - ? , 2) + POWER(FEAR - ? , 2) + POWER(DISGUST - ? , 2) + POWER(ANGER - ? , 2)) AS DISTANCE FROM DASH6609.EMOTIONSTATS ORDER BY DISTANCE FETCH FIRST 11 ROWS ONLY', function(err, stmt){
             if(err){
                 console.log(err);
             }else{
