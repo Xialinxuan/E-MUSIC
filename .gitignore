@@ -1,4 +1,3 @@
 node_modules
 manifest.yml
 controllers/service.js
-models/config.js

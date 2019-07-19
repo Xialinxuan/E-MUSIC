@@ -1,6 +1,6 @@
-const apiUrl = "https://myneteasecloudmusicapi.us-east.mybluemix.net/search?keywords="
+const apiUrl = "https://ye-host.mybluemix.net/search?keywords="
 const fetch = require('node-fetch');
-const maxRequest = 10;
+const maxRequest = 30;
 
 async function searchSong(songName, callback){
     let ret = {};

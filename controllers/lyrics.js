@@ -1,6 +1,6 @@
-const apiUrl = "https://myneteasecloudmusicapi.us-east.mybluemix.net/lyric?id="
+const apiUrl = "https://lynx-node.mybluemix.net/lyric?id="
 const fetch = require('node-fetch');
-const maxRequest = 100
+const maxRequest = 30;
 
 async function fetchLyricInJson(songID, callback){
     let strID = '' + songID;
@@ -17,7 +17,7 @@ async function fetchLyricInJson(songID, callback){
         });
         if(flag) break;
     }
-    callback(undefined, lyric, songID);
+    callback(undefined, lyric);
 }
 
 function lyricProcess(lyric, callback){
@@ -71,7 +71,7 @@ function lyricProcess(lyric, callback){
     for(var i=0,j=0; i<lyricResult.length-1; i++){
         var lineinterval=lyricResult[i+1][0]-lyricResult[i][0];
         timeinterval+=lineinterval;
-        if(timeinterval>10){
+        if(timeinterval>5){
             currentime=lyricResult[i][0];
             var k;
             if(j==0)
