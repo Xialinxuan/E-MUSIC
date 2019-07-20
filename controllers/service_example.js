@@ -76,7 +76,52 @@ function build(){
   });
 }
 
+async function analyzeEmotionBySession(lyricEmotion){
+  let emotionResult=new Array();
+  for(var i=0;i<lyricEmotion.length;i++){
+    const element = lyricEmotion[i];
+    if(element[1].length){
+      const analyzeParams = {
+        'text': element[1],
+        'features': {
+          'emotion':{}
+        },
+        'language': 'en'
+      }
+      await naturalLanguageUnderstanding.analyze(analyzeParams)
+      .then(analysisResults => {
+        emotion = new Array();
+        emotion.push(analysisResults.emotion.document.emotion.sadness);
+        emotion.push(analysisResults.emotion.document.emotion.joy);
+        emotion.push(analysisResults.emotion.document.emotion.fear);
+        emotion.push(analysisResults.emotion.document.emotion.disgust);
+        emotion.push(analysisResults.emotion.document.emotion.anger);
+        emotionResult.push([element[0],emotion]);
+      })
+      .catch(err => {
+        console.log(err);
+        emotionResult.push([element[0],[0, 0, 0, 0, 0]]);
+      });
+    }else{
+      emotionResult.push([element[0],[0, 0, 0, 0, 0]]);
+    }
+  }
+  return emotionResult;
+}
+
+function recommend(emotionParams, callback){
+  models.selectForRecommend(emotionParams, function(err, idSet){
+    if(err){
+      console.log(err);
+    }else{
+      callback(undefined, idSet);
+    }
+  });
+}
+
 module.exports = {
-  "analyzeEmotion": analyzeEmotion,
-  "build": build
+    "analyzeEmotion": analyzeEmotion,
+    "build": build,
+    "recommend": recommend,
+    "analyzeEmotionBySession": analyzeEmotionBySession
 }
