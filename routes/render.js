@@ -10,123 +10,133 @@ function route(app) {
 
   app.all('/search', (req,res) => {
     let songName = encodeURI(req.query['search']);
-    let songUrl = undefined;
-    let songLyric = undefined;
-    let songDetail;
-    let code = 0;
-    controllers.searchSong(songName,function(err,songResult){
-      if(err) {
-        console.log(err);
-        res.status(400).end();
-      } else{
-        let songId=songResult.id;
-        controllers.check(songId, function(err, flag){
-          if(err){
-            console.log(err);
-          }else{
-            if(flag){
-              controllers.mp3url(songId,function(err,result){
-                if(err){
-                  console.log(err);
-                  res.status(400).end();
-                } else{
-                    songUrl = result.url;
-                }
-              });
-              controllers.detailSong(songId, function (err, detail) {
-                if(err){
-                    console.log(err);
-                }
-                else {
-                    songDetail = detail;
-                    controllers.fetchLyricInJson(songId,function(err, lyricData){
-                      if(err) {
-                          console.log(err);
-                          res.status(400).end();
-                      } else {
-                          if(lyricData.uncollected != undefined && lyricData.uncollected == true){
-                            res.send({code: -3});   //网易云未收录
-                          }else if(lyricData.nolyric){
-                            code = 0;
-                            res.send({songUrl: songUrl, songResult: songResult, detail: songDetail, code: code});
-                          }else if(lyricData.tlyric.lyric == undefined){
-                            res.send({code: -1});   //中文歌
-                          }else{
-                            controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
-                              if(err){
-                                  console.log(err);
-                              }
-                              else{
-                                  code = 1;
-                                  songLyric = lyricResult;
-                                  res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult, detail: songDetail, code: code});
-                              }
-                            });
-                          }
-                      }
-                  });
-                }
-              });
+    if(songName == undefined || songName == ''){
+      res.send({code: -4});
+    }else{
+      let songUrl = undefined;
+      let songLyric = undefined;
+      let songDetail;
+      let code = 0;
+      controllers.searchSong(songName,function(err,songResult){
+        if(err) {
+          console.log(err);
+          res.status(400).end();
+        } else{
+          let songId=songResult.id;
+          controllers.check(songId, function(err, flag){
+            if(err){
+              console.log(err);
             }else{
-              res.send({code: -2});   //无版权
+              if(flag){
+                controllers.mp3url(songId,function(err,result){
+                  if(err){
+                    console.log(err);
+                    res.status(400).end();
+                  } else{
+                      songUrl = result.url;
+                  }
+                });
+                controllers.detailSong(songId, function (err, detail) {
+                  if(err){
+                      console.log(err);
+                  }
+                  else {
+                      songDetail = detail;
+                      controllers.fetchLyricInJson(songId,function(err, lyricData){
+                        if(err) {
+                            console.log(err);
+                            res.status(400).end();
+                        } else {
+                            if(lyricData.uncollected != undefined && lyricData.uncollected == true){
+                              res.send({code: -3});   //网易云未收录
+                            }else if(lyricData.nolyric){
+                              code = 0;
+                              res.send({songUrl: songUrl, songResult: songResult, detail: songDetail, code: code});
+                            }else if(lyricData.tlyric.lyric == undefined){
+                              res.send({code: -1});   //中文歌
+                            }else{
+                              controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
+                                if(err){
+                                    console.log(err);
+                                }
+                                else{
+                                    code = 1;
+                                    songLyric = lyricResult;
+                                    console.log(songUrl);
+                                    console.log(songDetail);
+                                    res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult, detail: songDetail, code: code});
+                                }
+                              });
+                            }
+                        }
+                    });
+                  }
+                });
+              }else{
+                res.send({code: -2});   //无版权
+              }
             }
-          }
-        })
-      }
-    });
+          })
+        }
+      });
+    }
   })
 
   app.all('/emotion', (req,res) => {
     let songName = encodeURI(req.query['name']);
-    controllers.searchSong(songName,function(err,songResult){
-      if(err) {
-        console.log(err);
-        res.status(400).end();
-      } else{
-        let songId=songResult.id;
-        controllers.fetchLyricInJson(songId,function(err, lyricData){
-          if(err) {
-              console.log(err);
-              res.status(400).end();
-          } else {
-              if(lyricData.uncollected != undefined && lyricData.uncollected == true){
-                res.send({code: -3});
-              }else if(lyricData.nolyric){
-                res.send({code: 0})
-              }else if(lyricData.tlyric.lyric == undefined){
-                res.send({code: -1});   //中文歌
-              }else{
-                controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
-                  if(err){
-                      console.log(err);
-                  }
-                  else{
-                    let lyric = '';
-                    for(let index = 0; index < lyricResult.length; index++){
-                      const element = lyricResult[index][1];
-                      if(element.length) lyric += element;
+    if(songName == undefined || songName == '') {
+      res.send({code: -4});
+    }else{
+      controllers.searchSong(songName,function(err,songResult){
+        if(err) {
+          console.log(err);
+          res.status(400).end();
+        } else{
+          let songId=songResult.id;
+          controllers.fetchLyricInJson(songId,function(err, lyricData){
+            if(err) {
+                console.log(err);
+                res.status(400).end();
+            } else {
+                if(lyricData.uncollected != undefined && lyricData.uncollected == true){
+                  res.send({code: -3});
+                }else if(lyricData.nolyric){
+                  res.send({code: 0})
+                }else if(lyricData.tlyric.lyric == undefined){
+                  res.send({code: -1});   //中文歌
+                }else{
+                  controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
+                    if(err){
+                        console.log(err);
                     }
-                    controllers.analyzeEmotion(lyric, function(err, analysisResults){
-                      if(err){
-                        console.log(err)
-                      }else{
-                        if(recentEmotionList.length < requiredRecentNum){
-                          recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
-                        }else{
-                          recentEmotionList.shift();
-                          recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
-                        }
+                    else{
+                      let lyric = '';
+                      for(let index = 0; index < lyricResult.length; index++){
+                        const element = lyricResult[index][1];
+                        if(element.length) lyric += element;
                       }
-                    });
-                      let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
-                      res.send({emotionResult: emotionResult, code: 1});
-                  }
-              });
-              }
-          }
+                      controllers.analyzeEmotion(lyric, function(err, analysisResults){
+                        if(err){
+                          console.log(err)
+                        }else{
+                          if(recentEmotionList.length < requiredRecentNum){
+                            recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                          }else{
+                            recentEmotionList.shift();
+                            recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                          }
+                        }
+                      });
+                        let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
+                        res.send({emotionResult: emotionResult, code: 1});
+                    }
+                });
+                }
+            }
+        });
+        }
       });
-      }
-    });
+    }
   })
 
   app.all('/recommend', (req,res) => {
