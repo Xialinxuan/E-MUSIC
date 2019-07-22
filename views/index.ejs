@@ -174,9 +174,6 @@
 			else if(songrow1.style.display=="none" && songrow2.style.display=="none") {
 				if(flag == 0){
 					$(this).toggleClass("clicked");
-					/*songrow1.style.display='block';
-                    songrow2.style.display='block';*/
-					console.log("begin recommend");
 					//显示缓冲标志
 					loading.style.display = "block";
 
@@ -190,13 +187,9 @@
 						},
 						success: function(data){
 							var code = data.code;
-							console.log(code);
 							if(code == 1){
 								var recommendSongs = data.recommendSongs;
-								// for(var r = 0; r < recommendSongs.length; r++){
-								// 	console.log(recommendSongs[r][0]);
-								// 	console.log(recommendSongs[r][1]);
-								// }
+
 								$('#song-image1').attr("src", recommendSongs[0][1]);
 								$('#song-image2').attr("src", recommendSongs[1][1]);
 								$('#song-image3').attr("src", recommendSongs[2][1]);
@@ -661,8 +654,6 @@
 
                     emotion = data.emotionResult;
                     let overallEmotion = data.overallEmotion;
-                    console.log(overallEmotion);
-
                     //获取页面上的audio标签
                     var audio = document.getElementById('audio-player');
                     var emotionSeriesData=[];
@@ -703,17 +694,9 @@
                     });
 
                     audio.addEventListener("canplay", function(){
-                        console.log("canplay");
                         let duration = parseFloat(audio.duration);
-                        console.log(duration);
                         audio.addEventListener("timeupdate", function(){
-                            console.log(this.currentTime);
                             if(this.currentTime - duration == 0){
-                                console.log("enter");
-                                // let word = document.getElementById("word");
-                                // let chart = document.getElementById("chart");
-                                // word.style.display = "none";
-                                // chart.style.display = "none";
                                 barchart.style.display = "none";
 								barChartOverall.style.display = "block";
 
@@ -771,51 +754,38 @@
 <script>
 	// 点击推荐歌曲播放按钮事件
 	function listen1(){
-		console.log("enter listen");
 		var songName = $("#song-title1").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 	function listen2(){
-		console.log("enter listen");
 		var songName = $("#song-title2").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 	function listen3(){
-		console.log("enter listen");
 		var songName = $("#song-title3").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 	function listen4(){
-		console.log("enter listen");
 		var songName = $("#song-title4").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 	function listen5(){
-		console.log("enter listen");
 		var songName = $("#song-title5").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 	function listen6(){
-		console.log("enter listen");
 		var songName = $("#song-title6").html();
-		console.log(songName);
 		if(songName != "Song")
 			searchSong(songName);
 	}
 
 	// 选择情感表达模式按钮
 	$(".checked-switch").click(function () {
-		console.log("click");
 		var chartDisplay = document.getElementById("chart");
 		var wordDisplay = document.getElementById("word");
 		if(chartDisplay.style.display == "none"){
@@ -829,12 +799,6 @@
 			wordDisplay.style.display = "block";
 		}
 	})
-
-	/* UItoTop jQuery Plugin 1.2 | Matt Varone | http://www.mattvarone.com/web-design/uitotop-jquery-plugin */
-	/*(function($){$.fn.UItoTop=function(options){var defaults={text:'To Top',min:200,inDelay:600,outDelay:400,containerID:'toTop',containerHoverID:'toTopHover',scrollSpeed:1200,easingType:'linear'},settings=$.extend(defaults,options),containerIDhash='#'+settings.containerID,containerHoverIDHash='#'+settings.containerHoverID;$('body').append('<a href="#" id="'+settings.containerID+'">'+settings.text+'</a>');$(containerIDhash).hide().on('click.UItoTop',function(){$('html, body').animate({scrollTop:0},settings.scrollSpeed,settings.easingType);$('#'+settings.containerHoverID,this).stop().animate({'opacity':0},settings.inDelay,settings.easingType);return false;}).prepend('<span id="'+settings.containerHoverID+'"></span>').hover(function(){$(containerHoverIDHash,this).stop().animate({'opacity':1},600,'linear');},function(){$(containerHoverIDHash,this).stop().animate({'opacity':0},700,'linear');});$(window).scroll(function(){var sd=$(window).scrollTop();if(typeof document.body.style.maxHeight==="undefined"){$(containerIDhash).css({'position':'absolute','top':sd+$(window).height()-50});}
-		if(sd>settings.min)
-			$(containerIDhash).fadeIn(settings.inDelay);else
-			$(containerIDhash).fadeOut(settings.Outdelay);});};})(jQuery);
-*/
+    
 </script>
 </html>
