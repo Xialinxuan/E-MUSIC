@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/public'));
 
 routes_render(app);
 
@@ -26,16 +26,11 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// app.enable('trust proxy');
+app.enable('trust proxy');
 
-// app.use (function (req, res, next) {
-//   if (req.secure || process.env.BLUEMIX_REGION === undefined) {
-//     next();
-//   } else {
-//     console.log('redirecting to https');
-//     res.redirect('https://' + req.headers.host + req.url);
-//   }
-// })
+app.use (function (req, res, next) {
+    res.redirect('https://' + req.headers.host + req.url);
+})
 
 // error handler
 app.use(function(err, req, res, next) {

@@ -9,7 +9,7 @@ function route(app) {
   });
 
   app.all('/search', (req,res) => {
-    let songName = encodeURI(req.query['search']);
+    let songName = encodeURI(req.query.search);
     if(songName == undefined || songName == ''){
       res.send({code: -4});
     }else{
@@ -83,7 +83,7 @@ function route(app) {
   })
 
   app.all('/emotion', (req,res) => {
-    let songName = encodeURI(req.query['name']);
+    let songName = encodeURI(req.query.name);
     if(songName == undefined || songName == '') {
       res.send({code: -4});
     }else{
@@ -128,7 +128,39 @@ function route(app) {
                         }
                       });
                         let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
-                        res.send({emotionResult: emotionResult, code: 1});
+                        let emotion = [0, 0, 0, 0, 0];
+                        for (let index = 0; index < emotionResult.length; index++) {
+                          const element = emotionResult[index][1];
+                          emotion[0] += element[0];
+                          emotion[1] += element[1];
+                          emotion[2] += element[2];
+                          emotion[3] += element[3];
+                          emotion[4] += element[4];
+                        }
+                        let max = 0;
+                        let overallEmotion = '';
+                        for (let index = 0; index < emotion.length; index++) {
+                          const element = emotion[index];
+                          if(element > emotion[max]) max = index;
+                        }
+                        switch(max){
+                          case 0:
+                            overallEmotion = "sadness";
+                            break;
+                          case 1:
+                            overallEmotion = "joy";
+                            break;
+                          case 2:
+                            overallEmotion = "fear";
+                            break;
+                          case 3:
+                            overallEmotion = "disgust";
+                            break;
+                          case 3:
+                            overallEmotion = "anger";
+                            break;
+                        }
+                        res.send({emotionResult: emotionResult, code: 1, overallEmotion: overallEmotion});
                     }
                 });
                 }
