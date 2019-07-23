@@ -14,7 +14,13 @@ async function searchSong(songName, callback){
         });
         if(flag) break;
     }
-    callback(undefined, ret.result.songs[0])
+    if(ret.result.songCount == undefined){
+        callback(undefined, [0, 0]);
+    }else if(ret.result.songCount != 0){
+        callback(undefined, [ret.result.songs[0], ret.result.songCount]);
+    }else{
+        callback(undefined, [0, ret.result.songCount]);
+    }
 }
 
 

@@ -22,7 +22,10 @@ function route(app) {
           console.log(err);
           res.status(400).end();
         } else{
-          let songId=songResult.id;
+          if(songResult[1] == 0){
+            res.send({code: -5});
+          }else{
+            let songId=songResult[0].id;
           controllers.check(songId, function(err, flag){
             if(err){
               console.log(err);
@@ -51,7 +54,7 @@ function route(app) {
                               res.send({code: -3});   //网易云未收录
                             }else if(lyricData.nolyric){
                               code = 0;
-                              res.send({songUrl: songUrl, songResult: songResult, detail: songDetail, code: code});
+                              res.send({songUrl: songUrl, songResult: songResult[0], detail: songDetail, code: code});
                             }else if(lyricData.tlyric.lyric == undefined){
                               res.send({code: -1});   //中文歌
                             }else{
@@ -62,9 +65,7 @@ function route(app) {
                                 else{
                                     code = 1;
                                     songLyric = lyricResult;
-                                    console.log(songUrl);
-                                    console.log(songDetail);
-                                    res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult, detail: songDetail, code: code});
+                                    res.send({songUrl: songUrl, songLyric: songLyric, songResult: songResult[0], detail: songDetail, code: code});
                                 }
                               });
                             }
@@ -76,7 +77,8 @@ function route(app) {
                 res.send({code: -2});   //无版权
               }
             }
-          })
+          });
+          }
         }
       });
     }
@@ -92,80 +94,84 @@ function route(app) {
           console.log(err);
           res.status(400).end();
         } else{
-          let songId=songResult.id;
-          controllers.fetchLyricInJson(songId,function(err, lyricData){
-            if(err) {
-                console.log(err);
-                res.status(400).end();
-            } else {
-                if(lyricData.uncollected != undefined && lyricData.uncollected == true){
-                  res.send({code: -3});
-                }else if(lyricData.nolyric){
-                  res.send({code: 0})
-                }else if(lyricData.tlyric.lyric == undefined){
-                  res.send({code: -1});   //中文歌
-                }else{
-                  controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
-                    if(err){
-                        console.log(err);
-                    }
-                    else{
-                      let lyric = '';
-                      for(let index = 0; index < lyricResult.length; index++){
-                        const element = lyricResult[index][1];
-                        if(element.length) lyric += element;
+          if(songResult[1] == 0){
+            res.send({code: -5});
+          }else{
+            let songId=songResult[0].id;
+            controllers.fetchLyricInJson(songId,function(err, lyricData){
+              if(err) {
+                  console.log(err);
+                  res.status(400).end();
+              } else {
+                  if(lyricData.uncollected != undefined && lyricData.uncollected == true){
+                    res.send({code: -3});
+                  }else if(lyricData.nolyric){
+                    res.send({code: 0})
+                  }else if(lyricData.tlyric.lyric == undefined){
+                    res.send({code: -1});   //中文歌
+                  }else{
+                    controllers.lyricProcess(lyricData.lrc.lyric, async function (err, lyricResult,lyricEmotion) {
+                      if(err){
+                          console.log(err);
                       }
-                      controllers.analyzeEmotion(lyric, function(err, analysisResults){
-                        if(err){
-                          console.log(err)
-                        }else{
-                          if(recentEmotionList.length < requiredRecentNum){
-                            recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                      else{
+                        let lyric = '';
+                        for(let index = 0; index < lyricResult.length; index++){
+                          const element = lyricResult[index][1];
+                          if(element.length) lyric += element;
+                        }
+                        controllers.analyzeEmotion(lyric, function(err, analysisResults){
+                          if(err){
+                            console.log(err)
                           }else{
-                            recentEmotionList.shift();
-                            recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                            if(recentEmotionList.length < requiredRecentNum){
+                              recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                            }else{
+                              recentEmotionList.shift();
+                              recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
+                            }
                           }
-                        }
-                      });
-                        let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
-                        let emotion = [0, 0, 0, 0, 0];
-                        for (let index = 0; index < emotionResult.length; index++) {
-                          const element = emotionResult[index][1];
-                          emotion[0] += element[0];
-                          emotion[1] += element[1];
-                          emotion[2] += element[2];
-                          emotion[3] += element[3];
-                          emotion[4] += element[4];
-                        }
-                        let max = 0;
-                        let overallEmotion = '';
-                        for (let index = 0; index < emotion.length; index++) {
-                          const element = emotion[index];
-                          if(element > emotion[max]) max = index;
-                        }
-                        switch(max){
-                          case 0:
-                            overallEmotion = "sadness";
-                            break;
-                          case 1:
-                            overallEmotion = "joy";
-                            break;
-                          case 2:
-                            overallEmotion = "fear";
-                            break;
-                          case 3:
-                            overallEmotion = "disgust";
-                            break;
-                          case 3:
-                            overallEmotion = "anger";
-                            break;
-                        }
-                        res.send({emotionResult: emotionResult, code: 1, overallEmotion: overallEmotion});
-                    }
-                });
-                }
-            }
-        });
+                        });
+                          let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
+                          let emotion = [0, 0, 0, 0, 0];
+                          for (let index = 0; index < emotionResult.length; index++) {
+                            const element = emotionResult[index][1];
+                            emotion[0] += element[0];
+                            emotion[1] += element[1];
+                            emotion[2] += element[2];
+                            emotion[3] += element[3];
+                            emotion[4] += element[4];
+                          }
+                          let max = 0;
+                          let overallEmotion = '';
+                          for (let index = 0; index < emotion.length; index++) {
+                            const element = emotion[index];
+                            if(element > emotion[max]) max = index;
+                          }
+                          switch(max){
+                            case 0:
+                              overallEmotion = "sadness";
+                              break;
+                            case 1:
+                              overallEmotion = "joy";
+                              break;
+                            case 2:
+                              overallEmotion = "fear";
+                              break;
+                            case 3:
+                              overallEmotion = "disgust";
+                              break;
+                            case 3:
+                              overallEmotion = "anger";
+                              break;
+                          }
+                          res.send({emotionResult: emotionResult, code: 1, overallEmotion: overallEmotion});
+                      }
+                  });
+                  }
+              }
+          });
+          }
         }
       });
     }
