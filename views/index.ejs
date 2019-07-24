@@ -156,7 +156,7 @@
 	</div>
 
 	<script>
-		let flag = 0;//列表歌曲不够时，只有第一次点击该按钮会有alert提示
+		let flag = 0;//列表歌曲不够时，只有打开推荐时该按钮会有alert提示
 		//script for the recommend button
 		$(".recommend-button").click(function() {
 			//	show-and-hide
@@ -172,58 +172,79 @@
                 loading.style.display = "none";
 			}
 			else if(songrow1.style.display=="none" && songrow2.style.display=="none") {
-				if(flag == 0){
-					$(this).toggleClass("clicked");
-					//显示缓冲标志
-					loading.style.display = "block";
+				if(localStorage.length == 6){
+						$(this).toggleClass("clicked");
+						//显示缓冲标志
+						loading.style.display = "block";
 
-					$.ajax({
-						data: {},
-						dataType: 'json',
-						type: 'GET',
-						url: "/recommend",
-						error: function(jqXHR, textStatus, errorThrown){
-							console.log(jqXHR);
-						},
-						success: function(data){
-							var code = data.code;
-							if(code == 1){
-								var recommendSongs = data.recommendSongs;
+						let recent1 = JSON.parse(localStorage.getItem("recent1"));
+						let recent2 = JSON.parse(localStorage.getItem("recent2"));
+						let recent3 = JSON.parse(localStorage.getItem("recent3"));
+						let recent1_id = parseInt(localStorage.getItem("recent1_id"));
+						let recent2_id = parseInt(localStorage.getItem("recent2_id"));
+						let recent3_id = parseInt(localStorage.getItem("recent3_id"));
 
-								$('#song-image1').attr("src", recommendSongs[0][1]);
-								$('#song-image2').attr("src", recommendSongs[1][1]);
-								$('#song-image3').attr("src", recommendSongs[2][1]);
-								$('#song-image4').attr("src", recommendSongs[3][1]);
-								$('#song-image5').attr("src", recommendSongs[4][1]);
-								$('#song-image6').attr("src", recommendSongs[5][1]);
+						$.ajax({
+							data: {
+                                recent1: [recent1_id, recent1],
+                                recent2: [recent2_id, recent2],
+                                recent3: [recent3_id, recent3]
+							},
+							dataType: 'json',
+							type: 'POST',
+							url: "/recommend",
+							error: function(jqXHR, textStatus, errorThrown){
+								console.log(jqXHR);
+							},
+							success: function(data){
+								var code = data.code;
+								if(code == 1){
+									var recommendSongs = data.recommendSongs;
+									$('#song-image1').attr("src", recommendSongs[0][1]);
+									$('#song-image2').attr("src", recommendSongs[1][1]);
+									$('#song-image3').attr("src", recommendSongs[2][1]);
+									$('#song-image4').attr("src", recommendSongs[3][1]);
+									$('#song-image5').attr("src", recommendSongs[4][1]);
+									$('#song-image6').attr("src", recommendSongs[5][1]);
 
-								$('#song-title1').html(recommendSongs[0][0]);
-								$('#song-title2').html(recommendSongs[1][0]);
-								$('#song-title3').html(recommendSongs[2][0]);
-								$('#song-title4').html(recommendSongs[3][0]);
-								$('#song-title5').html(recommendSongs[4][0]);
-								$('#song-title6').html(recommendSongs[5][0]);
+									$('#song-title1').html(recommendSongs[0][0]);
+									$('#song-title2').html(recommendSongs[1][0]);
+									$('#song-title3').html(recommendSongs[2][0]);
+									$('#song-title4').html(recommendSongs[3][0]);
+									$('#song-title5').html(recommendSongs[4][0]);
+									$('#song-title6').html(recommendSongs[5][0]);
 
-								loading.style.display = "none";
-								songrow1.style.display = "block";
-								songrow2.style.display = "block";
+									loading.style.display = "none";
+									songrow1.style.display = "block";
+									songrow2.style.display = "block";
+								}
+								else{
+									// flag = 1;
+									songrow1.style.display='none';
+									songrow2.style.display='none';
+									// //隐藏缓冲标志
+									loading.style.display = "none";
+									alert("An unexpected error occurs!");
+								}
 							}
-							else if(code == 0){
-								flag = 1;
-								songrow1.style.display='none';
-								songrow2.style.display='none';
-								// //隐藏缓冲标志
-								loading.style.display = "none";
-								alert("Please listen to more music to make recommendation accurate!");
-							}
-						}
-					})
+						})
 				}
 				else{
-					$(this).toggleClass("clicked");
+					if(flag == 0){
+						songrow1.style.display='none';
+						songrow2.style.display='none';
+						// //隐藏缓冲标志
+						loading.style.display = "none";
+						alert("Please listen to more music to make recommendation accurate!");
+						flag = 1;
+					}
+					else{
+						flag = 0;
+					}
 				}
 			}
 		});
+
 	</script>
 
 	<!--缓冲标志-->
@@ -312,7 +333,10 @@
     var emotion;
     var code;
     var myChart;
-
+    let song_list = ["recent1", "recent2", "recent3"];
+    let index = (window.localStorage.length / 2) % 3;
+    let id_list = ["recent1_id", "recent2_id", "recent3_id"];
+    let index_id = (window.localStorage.length / 2) % 3;
     //初始化barchart
     $("#chart").css( 'width', $("#chart").width());
     require.config({
@@ -432,7 +456,6 @@
                 $("#anger").css({fontSize: 30});
 
                 code = data.code;
-                console.log(code);
                 //判断是否纯音乐
                 if(code == 1){
                     songUrl = data.songUrl;
@@ -442,6 +465,13 @@
                     detail = data.detail;
                     album = detail.al.picUrl;
                     songLyric = data.songLyric;
+
+                    if (typeof(Storage) !== "undefined") {
+						// 存储
+						localStorage.setItem(id_list[index_id], detail.id);
+						index_id = (index_id + 1) % 3;
+					}
+
 
                     //修改HTML值
                     $("#current-song").html(currentSong);
@@ -654,6 +684,15 @@
 
                     emotion = data.emotionResult;
                     let overallEmotion = data.overallEmotion;
+
+                    let emotionJson = JSON.stringify(data.emotionJson);
+					// 判断浏览器是否支持
+					if (typeof(Storage) !== "undefined") {
+                        // 存储
+						localStorage.setItem(song_list[index], emotionJson);
+						index = (index + 1)%3;
+					}
+
                     //获取页面上的audio标签
                     var audio = document.getElementById('audio-player');
                     var emotionSeriesData=[];

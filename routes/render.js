@@ -1,6 +1,5 @@
 const controllers = require('../controllers');
-//const models = require('../models');
-const requiredRecentNum = 1;
+const requiredRecentNum = 3;
 let recentEmotionList = new Array();
 
 function route(app) {
@@ -86,6 +85,7 @@ function route(app) {
 
   app.all('/emotion', (req,res) => {
     let songName = encodeURI(req.query.name);
+    let emotionJson;
     if(songName == undefined || songName == '') {
       res.send({code: -4});
     }else{
@@ -124,12 +124,7 @@ function route(app) {
                           if(err){
                             console.log(err)
                           }else{
-                            if(recentEmotionList.length < requiredRecentNum){
-                              recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
-                            }else{
-                              recentEmotionList.shift();
-                              recentEmotionList.push([songId, analysisResults.emotion.document.emotion]);
-                            }
+                            emotionJson = analysisResults.emotion.document.emotion;
                           }
                         });
                           let emotionResult = await controllers.analyzeEmotionBySession(lyricEmotion);
@@ -165,7 +160,7 @@ function route(app) {
                               overallEmotion = "anger";
                               break;
                           }
-                          res.send({emotionResult: emotionResult, code: 1, overallEmotion: overallEmotion});
+                          res.send({emotionResult: emotionResult, code: 1, overallEmotion: overallEmotion, emotionJson: emotionJson});
                       }
                   });
                   }
@@ -178,56 +173,62 @@ function route(app) {
   })
 
   app.all('/recommend', (req,res) => {
-    if(recentEmotionList.length < requiredRecentNum){
-      res.send({code: 0});
-    }else{
-      let sadness=0, joy=0, fear=0, disgust=0, anger=0;
-      for (let index = 0; index < requiredRecentNum; index++) {
-        const element = recentEmotionList[index];
-        sadness += element[1].sadness;
-        joy += element[1].joy;
-        fear += element[1].fear;
-        disgust += element[1].disgust;
-        anger += element[1].anger;
-      }
-      controllers.recommend([sadness/(requiredRecentNum * 1.0),joy/(requiredRecentNum * 1.0),fear/(requiredRecentNum * 1.0),disgust/(requiredRecentNum * 1.0),anger/(requiredRecentNum * 1.0)], function(err, idSet){
-        if(err){
-          console.log(err);
-        }else{
-          let idStr = '';
-          let count = 0;
-          for (let index = 0; index < idSet.length && count < 6; index++) {
-            const element = idSet[index];
-            let flag = 0;
-            for(let i = 0;i < requiredRecentNum; i++){
-              if(element == recentEmotionList[i][0]) {
-                flag = 1;
-                break;
-              }
-            }
-            if(flag) continue;
-            if(count == 5){
-              idStr += element;
-            }else{
-              idStr = idStr + element + ',';
-            }
-            count++;
-          }
-          controllers.detailSongs(idStr,function(err, result){
-            if(err){
-              console.log(err);
-            }else{
-              let recommendSongs = new Array();
-              for (let index = 0; index < result.length; index++) {
-                const element = result[index];
-                recommendSongs.push([element.name, element.al.picUrl]);
-              }
-              res.send({recommendSongs: recommendSongs, code: 1});
-            }
-          });
-        }
-      });
+    let recent1 = req.body.recent1;
+    let recent2 = req.body.recent2;
+    let recent3 = req.body.recent3;
+    let recentEmotionList = new Array();
+    recentEmotionList.push([parseInt(recent1[0]), recent1[1]]);
+    recentEmotionList.push([parseInt(recent2[0]), recent2[1]]);
+    recentEmotionList.push([parseInt(recent3[0]), recent3[1]]);
+    console.log(recentEmotionList);
+    let sadness=0, joy=0, fear=0, disgust=0, anger=0;
+    for (let index = 0; index < recentEmotionList.length; index++) {
+      const element = recentEmotionList[index];
+      sadness += parseFloat(element[1].sadness);
+      joy += parseFloat(element[1].joy);
+      fear += parseFloat(element[1].fear);
+      disgust += parseFloat(element[1].disgust);
+      anger += parseFloat(element[1].anger);
     }
+    controllers.recommend([sadness/(recentEmotionList.length * 1.0),joy/(recentEmotionList.length * 1.0),fear/(recentEmotionList.length * 1.0),disgust/(recentEmotionList.length * 1.0),anger/(recentEmotionList.length * 1.0)], function(err, idSet){
+      if(err){
+        console.log(err);
+        res.send({code: 0});
+      }else{
+        let idStr = '';
+        let count = 0;
+        for (let index = 0; index < idSet.length && count < 6; index++) {
+          const element = idSet[index];
+          let flag = 0;
+          for(let i = 0;i < recentEmotionList.length; i++){
+            if(element == recentEmotionList[i][0]) {
+              flag = 1;
+              break;
+            }
+          }
+          if(flag) continue;
+          if(count == 5){
+            idStr += element;
+          }else{
+            idStr = idStr + element + ',';
+          }
+          count++;
+        }
+        controllers.detailSongs(idStr,function(err, result){
+          if(err){
+            console.log(err);
+            res.send({code: 0});
+          }else{
+            let recommendSongs = new Array();
+            for (let index = 0; index < result.length; index++) {
+              const element = result[index];
+              recommendSongs.push([element.name, element.al.picUrl]);
+            }
+            res.send({recommendSongs: recommendSongs, code: 1});
+          }
+        });
+      }
+    });
   });
 
 }
