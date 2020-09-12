@@ -24,7 +24,7 @@
     "intelli-espower-loader": "^1.0.1",
     "mocha": "^6.2.0",
     "morgan": "~1.9.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-gyp": "^5.0.3",
     "pac-proxy-agent": "^3.0.0",
     "power-assert": "^1.6.1",
