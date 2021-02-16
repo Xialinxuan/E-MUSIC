@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>E-Music</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+<link href="/stylesheets/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/javascripts/jquery-1.11.0.min.js"></script>
+<!-- Custom Theme files -->
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css" media="all"/>
+<link rel="stylesheet" href="/stylesheets/flexslider.css" type="text/css" media="screen" />
+<!-- Custom Theme files -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!--Google Fonts-->
+<link href='https://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
+<!-- start-smoth-scrolling -->
+<script type="text/javascript" src="/javascripts/move-top.js"></script>
+<script type="text/javascript" src="/javascripts/easing.js"></script>
+	<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$(".scroll").click(function(event){		
+					event.preventDefault();
+					$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+				});
+			});
+	</script>
+<!-- //end-smoth-scrolling -->
+ <!--video -->	
+<link href="/stylesheets/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/javascripts/jquery.jplayer.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){
+
+	$("#jquery_jplayer_1").jPlayer({
+		ready: function () {
+			$(this).jPlayer("setMedia", {
+				title: "Finding Nemo Teaser",
+				m4v: "http://www.jplayer.org/video/m4v/Finding_Nemo_Teaser.m4v",
+				poster: "/images/cake.jpg"
+
+			});
+		},
+		swfPath: "../../dist/jplayer",
+		supplied: "m4v",
+		size: {
+			width: "100%",
+			height: "275px",
+			cssClass: "jp-video-360p"
+		},
+		useStateClassSkin: true,
+		autoBlur: false,
+		smoothPlayBar: true,
+		keyEnabled: true,
+		remainingDuration: true,
+		toggleDuration: true
+	});
+});
+//]]>
+</script>
+<!--//video -->
+<!--audio strat-->
+<link rel="stylesheet" type="text/css" media="all" href="/stylesheets/audio.css">
+<script type="text/javascript" src="/javascripts/mediaelement-and-player.min.js"></script>	   
+<!-- audio end-->
+<!--pop up strat here-->
+<script src="/javascripts/jquery.magnific-popup.js" type="text/javascript"></script>
+
+ <script>
+						$(document).ready(function() {
+						$('.popup-with-zoom-anim').magnificPopup({
+							type: 'inline',
+							fixedContentPos: false,
+							fixedBgPos: true,
+							overflowY: 'auto',
+							closeBtnInside: true,
+							preloader: false,
+							midClick: true,
+							removalDelay: 300,
+							mainClass: 'my-mfp-zoom-in'
+						});
+																						
+						});
+				</script>
+<!--pop up end here-->
+<script src="/javascripts/bootstrap.min.js"></script>
+<!--source js for the show-and-hide-->
+	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+<!--js for the rolling lyrics and bar chart-->
+	<script src="/javascripts/lyric-and-chart.js"></script>
+</head>
+<body>
+
+<!--logo image-->
+<div class="top-line">
+	<img src="/images/logo透明.png" alt="" style="width: 18%; margin-left: 15%">
+
+	<!--search box-->
+	<div class="serch1">
+		<form method="post" action="/search">
+			<input type="submit" value="">
+			<input type="text" placeholder="Search">
+		</form>
+	</div>
+</div>
+
+<!--dynamic music notes-->
+<div class="note-position-1 note-amination">
+	&#9835;
+</div>
+<div class="note-position-2 note-amination animation-delay-2">
+	&#9833;
+</div>
+<div class="note-position-3 note-amination animation-delay-1">
+	&#9839;
+</div>
+<div class="note-position-4 note-amination">
+	&#9834;
+</div>
+
+
+<!--header start here-->
+<div class="mother-grid" style="position: relative">
+<!--rolling lyrics and bar chart here-->
+   	 	<div class="col-md-10" style="margin: -2% 10% 0 10%">
+   	 	   <div class="audio-plat-back">
+
+			   <!--	rolling lyrics -->
+			   <div class="lyrics">
+				   <p id="lyric" onclick="showFullLyric()"
+					  onmouseover="lyricTip(this,event)"
+					  onmouseout="tipOut()">
+					   Lyrics
+				   </p>
+			   </div>
+
+			   <!-- bar chart in real-time -->
+			   <div class="bar-chart">
+				   <div id="chart">
+					   <ul id="bars">
+						   <li><div data-percentage="56" class="bar"></div><span>Emotion 1</span></li>
+						   <li><div data-percentage="33" class="bar"></div><span>Emotion 2</span></li>
+						   <li><div data-percentage="54" class="bar"></div><span>Emotion 3</span></li>
+						   <li><div data-percentage="94" class="bar"></div><span>Emotion 4</span></li>
+						   <li><div data-percentage="44" class="bar"></div><span>Emotion 5</span></li>
+					   </ul>
+				   </div>
+			   </div>
+
+   	 	   	  <div class="audio-ply-1">
+   	  	          <div class="audio-top">
+					  <!--album photo here-->
+					  <img src="/images/jay-chou.jpg" style="float: left; width: 15%; height: 15%; margin-left: 0">
+						<!--audio player here-->
+						<div class="audio-player" style="margin-left: 25%; margin-top: 3%">
+							<audio id="audio-player" controls="controls">
+								<source src="http://m8.music.126.net/20190717214008/88e2da9667ac174bb2690d31ff0f0c2d/ymusic/b1c4/b5de/74d0/9158ae4873e10b743790320db9ef9b29.mp3" type="audio/mpeg"></source>
+							</audio>
+						</div>
+
+							<script type="text/javascript">
+								$(function(){
+								  $('#audio-player').mediaelementplayer({
+									alwaysShowControls: true,
+									features: ['playpause','progress','volume'],
+									audioVolume: 'horizontal',
+									iPadUseNativeControls: true,
+									iPhoneUseNativeControls: true,
+									AndroidUseNativeControls: true
+								  });
+								});
+							</script>
+
+						<ul class="next-top">
+							<li><a href="#"><i> </i></a></li>
+							<li><a href="#"><i class="next"> </i></a></li>
+							
+						</ul>
+					</div>
+   	 	   	  </div>
+   	 	   </div>	 	   
+   	 	</div>
+   	 	<!--<div class="col-md-6 block-5-right">
+   	 		<div class="bun">
+   	 			<div class=" video-grid">
+					<div id="jp_container_1" class="jp-video jp-video-360p" role="application" aria-label="media player">
+						<div class="jp-type-single">
+							<div id="jquery_jplayer_1" class="jp-jplayer"></div>
+							<div class="jp-gui">
+								<div class="jp-video-play">
+									<button class="jp-video-play-icon" role="button" tabindex="0">play</button>
+								</div>
+								<div class="jp-interface">
+									<div class="jp-progress">
+										<div class="jp-seek-bar">
+											<div class="jp-play-bar"></div>
+										</div>
+									</div>
+									<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+									<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+									<div class="jp-controls-holder">
+										<div class="jp-controls">
+											<button class="jp-play" role="button" tabindex="0">play</button>
+											<button class="jp-stop" role="button" tabindex="0">stop</button>
+										</div>
+										<div class="jp-volume-controls">
+											<button class="jp-mute" role="button" tabindex="0">mute</button>
+											<button class="jp-volume-max" role="button" tabindex="0">max volume</button>
+											<div class="jp-volume-bar">
+												<div class="jp-volume-bar-value"></div>
+											</div>
+										</div>
+										<div class="jp-toggles">
+											<button class="jp-repeat" role="button" tabindex="0">repeat</button>
+											<button class="jp-full-screen" role="button" tabindex="0">full screen</button>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							<div class="jp-no-solution">
+								<span>Update Required</span>
+								To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+							</div>
+						</div>
+					</div>
+				</div>
+   	 		</div>
+   	 		&lt;!&ndash;<div class="selfie">
+   	 			<div class="selfie-img">
+   	 				<ul>
+   	 					<li><a href="#"> <span class="arr-pink"> </span></a></li>
+   	 					<li><a href="#"> <span class="coins"> </span></a></li>
+   	 					<li><a href="#"> <span class="heart-selft"> </span></a></li>
+   	 				</ul>
+   	 			</div> 	 			
+   	 			<div class="selfie-bottom">
+   	 				<h5>It Is a Long Established Fact</h5>
+   	 				<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+   	 			</div>
+   	 		</div>&ndash;&gt;
+   	 	</div>-->
+   	 	<div class="clearfix"> </div>
+
+	<!--recommend button-->
+	<div class="row" style="position: relative">
+		<div class="recommend-button">
+			<label class="recommend-label">Recommendation?</label>
+		</div>
+	</div>
+
+<!-- script for the recommend button -->
+	<script>
+		$(".recommend-button").click(function() {
+			$(this).toggleClass("clicked");
+		//	show-and-hide
+			var songrow1 = document.getElementById("show1");
+			var songrow2 = document.getElementById("show2");
+			if(songrow1.style.display=="block" && songrow2.style.display=="block"){
+				songrow1.style.display='none';
+				songrow2.style.display='none';
+			}
+			else if(songrow1.style.display=="none" && songrow2.style.display=="none"){
+				songrow1.style.display='block';
+				songrow2.style.display='block';
+			}
+		});
+	</script>
+
+	<!--recommend songs-->
+	<div id="show1" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+			<div class="song-box">
+				<div class="song-img1">
+					<h4>不能说的秘密</h4>
+					<!--play button-->
+					<a class="video-play-button">
+						<span class="video-play-outline">
+							<img src="/images/jay-chou.jpg" alt="">
+						</span>
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							 viewBox="0 0 104 104" enable-background="new 0 0 104 104" xml:space="preserve">
+							<path fill="none" stroke="#FFFFFF" stroke-width="4" stroke-miterlimit="10" d="M26,35h52L52,81L26,35z"/>
+							<circle class="video-play-circle" fill="none" stroke="#DA3D25" stroke-width="4" stroke-miterlimit="10" cx="52" cy="52" r="50"/>
+						</svg>
+					</a>
+				</div>
+			</div>
+			<div class="song-box">
+				<div class="song-img1">
+					<h4>七里香</h4>
+					<img src="/images/jay-chou.jpg" alt="">
+				</div>
+			</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>她说</h4>
+				<img src="/images/jay-chou.jpg" alt="">
+			</div>
+		</div>
+	</div>
+
+	<div id="show2" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>不能说的秘密</h4>
+				<!--play button-->
+				<a class="video-play-button">
+						<span class="video-play-outline">
+							<img src="/images/jay-chou.jpg" alt="">
+						</span>
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						 viewBox="0 0 104 104" enable-background="new 0 0 104 104" xml:space="preserve">
+							<path fill="none" stroke="#FFFFFF" stroke-width="4" stroke-miterlimit="10" d="M26,35h52L52,81L26,35z"/>
+						<circle class="video-play-circle" fill="none" stroke="#DA3D25" stroke-width="4" stroke-miterlimit="10" cx="52" cy="52" r="50"/>
+						</svg>
+				</a>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>七里香</h4>
+				<img src="/images/jay-chou.jpg" alt="">
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4>她说</h4>
+				<img src="/images/jay-chou.jpg" alt="">
+			</div>
+		</div>
+	</div>
+
+
+  <div class="clearfix"> </div>
+</div>
+
+
+
+<!--<div class="copy-right">
+			<p>Copyright &copy; 2016.Company name All rights reserved.More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+</div>-->
+<script type="text/javascript">
+						$(document).ready(function() {
+							/*
+							var defaults = {
+					  			containerID: 'toTop', // fading element id
+								containerHoverID: 'toTopHover', // fading element hover id
+								scrollSpeed: 1200,
+								easingType: 'linear' 
+					 		};
+							*/
+							
+							$().UItoTop({ easingType: 'easeOutQuart' });
+							
+						});
+					</script>
+				<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+<!--header end here-->
+</body>
+</html>
+
+
+		
