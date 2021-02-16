@@ -1,0 +1,596 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>E-Music</title>
+	<link href="/stylesheets/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="/javascripts/jquery-1.11.0.min.js"></script>
+	<!-- Custom Theme files -->
+	<link href="/stylesheets/style.css" rel="stylesheet" type="text/css" media="all"/>
+	<link rel="stylesheet" href="/stylesheets/flexslider.css" type="text/css" media="screen" />
+	<!-- Custom Theme files -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="" />
+	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<!--Google Fonts-->
+	<link href='https://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
+	<!-- start-smooth-scrolling -->
+	<script type="text/javascript" src="/javascripts/move-top.js"></script>
+	<script type="text/javascript" src="/javascripts/easing.js"></script>
+	<!--audio start-->
+	<link rel="stylesheet" type="text/css" media="all" href="/stylesheets/audio.css">
+	<script type="text/javascript" src="/javascripts/mediaelement-and-player.min.js"></script>
+	<!-- audio end-->
+	<script src="/javascripts/bootstrap.min.js"></script>
+	<!--source js for the show-and-hide-->
+	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+	<!--js for the rolling lyrics and bar chart-->
+<!--	<script src="/javascripts/lyric-and-chart.js"></script>-->
+	<script src="//code.jquery.com/jquery.min.js"></script>
+	<!--情感显示模式滑动按钮样式-->
+	<link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/default.css">
+	<link rel='stylesheet prefetch' href='/stylesheets/font-awesome.min.css'>
+</head>
+<body>
+
+<!--logo image-->
+<div class="top-line">
+	<img src="/images/logo透明.png" alt="" style="width: 18%; margin-left: 15%">
+
+	<!--search box-->
+	<div class="serch1">
+		<input type="button" id="search-btn" value="" onclick="searchSong()">
+		<input type="text" id="search" placeholder="Search">
+	</div>
+</div>
+
+<!--处理search到的歌曲：显示歌曲信息，滚动歌词，情感柱形图-->
+<script>
+	var songUrl;
+	var songLyric;
+	var songResult;
+	var currentSong;
+	var currentArtist;
+	var album;
+	var detail;
+	var emotion;
+	var code;
+
+	//搜索歌曲获得歌曲信息，情感
+	function searchSong(e){
+		//显示缓冲标志
+		var loading = document.getElementById("loading");
+        var barchart = document.getElementById("barchart");
+
+		loading.style.display = "block";
+		barchart.style.display = "none";
+
+		var value;
+		var search;
+
+		if(e){
+			value = e;
+		}
+		else{
+			search = document.getElementById('search');
+			value = search.value;
+		}
+		//获取歌曲信息
+		$.ajax({
+			data: {},
+			dataType: 'json',
+			type: 'POST',
+			url: "/search?search="+value,
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log(jqXHR);
+			},
+			success: function(data){
+				//获取页面上的audio标签
+				var audio = document.getElementById('audio-player');
+				var line1 = document.getElementById('line1');
+				var line2 = document.getElementById('line2');
+				var line3 = document.getElementById('line3');
+				var line4 = document.getElementById('line4');
+				var line5 = document.getElementById('line5');
+
+				//初始化歌词
+				line1.textContent = "";
+				line2.textContent = "";
+				line3.textContent = "lyrics";
+				line4.textContent = "";
+				line5.textContent = "";
+
+				//初始化字体大小
+				$("#sadness").css({fontSize: 30});
+				$("#joy").css({fontSize: 30});
+				$("#fear").css({fontSize: 30});
+				$("#disgust").css({fontSize: 30});
+				$("#anger").css({fontSize: 30});
+
+				code = data.code;
+
+				//判断是否纯音乐
+				if(code == 1){
+					songUrl = data.songUrl;
+					songResult = data.songResult;
+					currentSong = songResult.name;
+					currentArtist = songResult.artists[0].name;
+					detail = data.detail;
+					album = detail.al.picUrl;
+					songLyric = data.songLyric;
+
+					//修改HTML值
+					$("#current-song").html(currentSong);
+					$("#current-artist").html(currentArtist);
+					$("#album").attr("src", album);
+					$("#audio-player").attr("src", songUrl);
+					$("#show-lyric");
+
+					//监听ontimeupdate事件
+					audio.addEventListener("timeupdate", function(e) {
+						//遍历所有歌词，看哪句歌词的时间与当前时间吻合
+						for (var i = 0, l = songLyric.length; i < l; i++) {
+							if (this.currentTime /*当前播放的时间*/ > songLyric[i][0]) {
+								//显示到页面
+								if(i == 0){
+									line1.textContent = "";
+									line2.textContent = "";
+									line3.textContent = songLyric[i][1];
+									line4.textContent = songLyric[i+1][1];
+									line5.textContent = songLyric[i+2][1];
+								}
+								else if(i == 1){
+									line1.textContent = "";
+									line2.textContent = songLyric[i-1][1];
+									line3.textContent = songLyric[i][1];
+									line4.textContent = songLyric[i+1][1];
+									line5.textContent = songLyric[i+2][1];
+								}
+								else if(i < songLyric.length - 2) {
+									line1.textContent = songLyric[i-2][1];
+									line2.textContent = songLyric[i-1][1];
+									line3.textContent = songLyric[i][1];
+									line4.textContent = songLyric[i+1][1];
+									line5.textContent = songLyric[i+2][1];
+								}
+								else if(i == songLyric.length - 2){
+									line1.textContent = songLyric[i-2][1];
+									line2.textContent = songLyric[i-1][1];
+									line3.textContent = songLyric[i][1];
+									line4.textContent = songLyric[i+1][1];
+									line5.textContent = "";
+								}
+								else{
+									line1.textContent = songLyric[i-2][1];
+									line2.textContent = songLyric[i-1][1];
+									line3.textContent = songLyric[i][1];
+									line4.textContent = "";
+									line5.textContent = "";
+								}
+							}
+						}
+					});
+				}
+				else if(code == 0){
+					line3.textContent = "Enjoy the Pure Music";
+				}
+				else if(code == -1){
+					alert("Chinese is not supported yet!");
+				}
+				else if(code == -2){
+					alert("No copyright!");
+				}
+				else if(code == -3){
+					alert("Cannot find this song!");
+				}
+				else if(code == -4){
+					alert("Please input the song name!");
+				}
+
+				loading.style.display = "none";
+				barchart.style.display = "block";
+			}
+		});
+
+		//获取情感
+		$.ajax({
+			data: {},
+			dataType: 'json',
+			type: 'POST',
+			url: "/emotion?name="+value,
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log(jqXHR);
+			},
+			success: function(data){
+				code = data.code;
+				if(code == 1){
+					emotion = data.emotionResult;
+                    let overallEmotion = data.overallEmotion;
+                    console.log(overallEmotion);
+
+					//获取页面上的audio标签
+					var audio = document.getElementById('audio-player');
+					//监听ontimeupdate事件
+					audio.addEventListener("timeupdate", function(e) {
+						//	情感图表
+						for(var j = 0, emotionLen = emotion.length; j < emotionLen; j++){
+							if(this.currentTime > emotion[j][0]){
+								$("#sadness").css({fontSize: emotion[j][1][0]*100});
+								// $("#sadness:hover:before").content(emotion[j][1][0]);
+								$("#joy").css({fontSize: emotion[j][1][1]*100});
+								// $("#joy:hover:before").attr('data-percentage', emotion[j][1][1]);
+								$("#fear").css({fontSize: emotion[j][1][2]*100});
+								// $("#fear:hover:before").attr('data-percentage', emotion[j][1][2]);
+								$("#disgust").css({fontSize: emotion[j][1][3]*100});
+								// $("#disgust:hover:before").attr('data-percentage', emotion[j][1][3]);
+								$("#anger").css({fontSize: emotion[j][1][4]*100});
+								// $("#anger:hover:before").attr('data-percentage', emotion[j][1][4]);
+							}
+						}
+					});
+
+                    audio.addEventListener("canplay", function(){
+                        console.log("canplay");
+                        let duration = parseFloat(audio.duration);
+                        console.log(duration);
+                        audio.addEventListener("timeupdate", function(){
+                            console.log(this.currentTime);
+                            if(this.currentTime - duration == 0){
+                                console.log("enter");
+                                let word = document.getElementById("word");
+                                let chart = document.getElementById("chart");
+                                word.style.display = "none";
+                                chart.style.display = "none";
+                                // $(".bar-chart").html("<h2>overall");
+                                if(overallEmotion == "sadness")
+                                    $(".bar-chart").html("<h1 style='color: lightskyblue; text-align: center; margin-top: 40%'>Sadness<h2>")
+                                else if(overallEmotion == "joy")
+                                    $(".bar-chart").html("<h1 style='color: #fdcc01; text-align: center; margin-top: 40%'>Joy<h2>")
+                                else if(overallEmotion == "fear")
+                                    $(".bar-chart").html("<h1 style='color: black; text-align: center; margin-top: 40%'>Fear<h2>")
+                                else if(overallEmotion == "disgust")
+                                    $(".bar-chart").html("<h1 style='color: green; text-align: center; margin-top: 40%'>Disgust<h2>")
+                                else if(overallEmotion == "anger")
+                                    $(".bar-chart").html("<h1 style='color: darkred; text-align: center; margin-top: 40%'>Anger<h2>")
+                            }
+                        });
+
+                    });
+				}
+				else{
+					$("#sadness").css({fontSize: 0});
+					$("#joy").css({fontSize: 0});
+					$("#fear").css({fontSize: 0});
+					$("#disgust").css({fontSize: 0});
+					$("#anger").css({fontSize: 0});
+					if(code == -1){
+						alert("Chinese is not supported yet!");
+					}
+					else if(code == -2){
+						alert("No copyright!");
+					}
+					else if(code == -3){
+						alert("Cannot fetch messages of this song!");
+					}
+					else if(code == -4){
+						alert("Please input the song name!");
+					}
+				}
+			}
+		})
+	}
+
+</script>
+
+<!--dynamic music notes-->
+<div class="note-position-1 note-amination">
+	&#9835;
+</div>
+<div class="note-position-2 note-amination animation-delay-2">
+	&#9833;
+</div>
+<div class="note-position-3 note-amination animation-delay-1">
+	&#9839;
+</div>
+<div class="note-position-4 note-amination">
+	&#9834;
+</div>
+
+
+<!--header start here-->
+<div class="mother-grid" style="position: relative">
+	<!--rolling lyrics and bar chart here-->
+	<div class="col-md-10" style="margin: -2% 10% 0 10%">
+		<div class="audio-plat-back">
+
+			<!--	rolling lyrics -->
+			<div class="lyrics">
+				<div id="lyricContainer" class="lyricContainer">
+					<div id="line1" class="line1"></div>
+					<div id="line2" class="line2"></div>
+					<div id="line3" class="line3">lyrics</div>
+					<div id="line4" class="line4"></div>
+					<div id="line5" class="line5"></div>
+				</div>
+			</div>
+
+			<!--缓冲标志-->
+			<div id="loading" class="loading-div" style="display: none">
+				<div class="loading"></div>
+				<h2>loading</h2>
+			</div>
+
+			<!-- bar chart in real-time -->
+			<div id="barchart" class="bar-chart">
+
+				<!--情感显示模式滑动按钮-->
+				<div class="dmaku-container">
+					<label class="switch-btn">
+						<input class="checked-switch" type="checkbox" />
+						<span class="text-switch" style="font-size: .4em" show-word="Word" show-chart="Bars"></span>
+						<span class="toggle-btn"></span>
+					</label>
+				</div>
+
+				<!--用文字大小展现情感-->
+				<div id="word" style="display: none">
+					<ul id="bars">
+						<li><div id="sadness" data-percentage="0" class="bar" style="margin-bottom: 200%; color: lightskyblue">Sadness</div><!--<span>Sadness</span>--></li>
+						<li><div id="joy" data-percentage="0" class="bar" style="margin-bottom: 330%; color: #fdcc01">Joy</div><!--<span>Joy</span>--></li>
+						<li><div id="fear" data-percentage="0" class="bar" style="margin-bottom: 123%; color: black">Fear</div><!--<span>Fear</span>--></li>
+						<li><div id="disgust" data-percentage="0" class="bar" style="margin-bottom: 280%; color: green">Disgust</div><!--<span>Disgust</span>--></li>
+						<li><div id="anger" data-percentage="0" class="bar" style="margin-bottom: 180%; color: darkred">Anger</div><!--<span>Anger</span>--></li>
+					</ul>
+				</div>
+
+				<!--用柱状图展现情感-->
+				<div id="chart">
+
+				</div>
+			</div>
+
+			<div class="audio-ply-1">
+				<div class="audio-top">
+					<!--album photo here-->
+					<img id="album" src="/images/jay-chou.jpg" style="float: left; width: 15%; height: 15%; margin-left: 0">
+					<div class="song-artist">
+						<!--song name here-->
+						<h2 id="current-song">Song Name</h2>
+						<!--artist name here-->
+						<h4 id="current-artist">Artist</h4>
+					</div>
+
+					<!--audio player here-->
+					<div class="audio-player" style="margin-left: 10%; margin-top: 3%">
+						<audio id="audio-player" controls="controls" autoplay="autoplay">
+							<source src="" type="audio/mp3"></source>
+						</audio>
+					</div>
+
+					<ul class="next-top">
+						<li><a href="#"><i> </i></a></li>
+						<li><a href="#"><i class="next"> </i></a></li>
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"> </div>
+
+	<!--recommend button-->
+	<div class="row" style="position: relative">
+		<div class="recommend-button">
+			<label class="recommend-label">Recommendation?</label>
+		</div>
+	</div>
+
+	<script>
+		//script for the recommend button
+		$(".recommend-button").click(function() {
+			$(this).toggleClass("clicked");
+			//	show-and-hide
+            var loading = document.getElementById("recom-loading");
+			var songrow1 = document.getElementById("show1");
+			var songrow2 = document.getElementById("show2");
+			if(songrow1.style.display=="block" && songrow2.style.display=="block"){
+				songrow1.style.display='none';
+				songrow2.style.display='none';
+                //隐藏缓冲标志
+                loading.style.display = "none";
+			}
+			else if(songrow1.style.display=="none" && songrow2.style.display=="none"){
+				/*songrow1.style.display='block';
+				songrow2.style.display='block';*/
+				console.log("begin recommend");
+				//显示缓冲标志
+				loading.style.display = "block";
+
+				$.ajax({
+					data: {},
+					dataType: 'json',
+					type: 'POST',
+					url: "/recommend",
+					error: function(jqXHR, textStatus, errorThrown){
+						console.log(jqXHR);
+					},
+					success: function(data){
+						var code = data.code;
+						console.log(code);
+						if(code == 1){
+							var recommendSongs = data.recommendSongs;
+							// for(var r = 0; r < recommendSongs.length; r++){
+							// 	console.log(recommendSongs[r][0]);
+							// 	console.log(recommendSongs[r][1]);
+							// }
+							$('#song-image1').attr("src", recommendSongs[0][1]);
+							$('#song-image2').attr("src", recommendSongs[1][1]);
+							$('#song-image3').attr("src", recommendSongs[2][1]);
+							$('#song-image4').attr("src", recommendSongs[3][1]);
+							$('#song-image5').attr("src", recommendSongs[4][1]);
+							$('#song-image6').attr("src", recommendSongs[5][1]);
+
+							$('#song-title1').html(recommendSongs[0][0]);
+							$('#song-title2').html(recommendSongs[1][0]);
+							$('#song-title3').html(recommendSongs[2][0]);
+							$('#song-title4').html(recommendSongs[3][0]);
+							$('#song-title5').html(recommendSongs[4][0]);
+							$('#song-title6').html(recommendSongs[5][0]);
+
+							loading.style.display = "none";
+							songrow1.style.display = "block";
+							songrow2.style.display = "block";
+						}
+						else if(code == 0){
+                            songrow1.style.display='none';
+                            songrow2.style.display='none';
+                            //隐藏缓冲标志
+                            loading.style.display = "none";
+							alert("Please listen to more music to make recommendation accurate!");
+						}
+					}
+				})
+			}
+		});
+	</script>
+
+	<!--缓冲标志-->
+	<div id="recom-loading" class="recom-loading-div" style="display: none">
+		<div class="loading"></div>
+		<h2>loading</h2>
+	</div>
+
+	<!--recommend songs-->
+	<div id="show1" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title1">Song</h4>
+				<img id = "song-image1" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen1()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 14%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title2">Song</h4>
+				<img id = "song-image2" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen2()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 46%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title3">Song</h4>
+				<img id = "song-image3" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen3()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 78%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div id="show2" class="col-md-10 row" style="float: none; margin: 0 auto; display: none">
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title4" >Song</h4>
+				<img id = "song-image4" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen4()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 14%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title5" >Song</h4>
+				<img id = "song-image5" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen5()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 46%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+		<div class="song-box">
+			<div class="song-img1">
+				<h4 id = "song-title6" >Song</h4>
+				<img id = "song-image6" src="/images/jay-chou.jpg" alt="">
+				<span onclick="listen6()" class="glyphicon glyphicon-play-circle"
+					  style="display: inline-block; position: absolute; left: 78%; top: 40%; font-size: 3em; color: #ffffff;">
+				</span>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="clearfix"> </div>
+</div>
+
+<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+</body>
+<script>
+	// 点击推荐歌曲播放按钮事件
+	function listen1(){
+		console.log("enter listen");
+		var songName = $("#song-title1").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+	function listen2(){
+		console.log("enter listen");
+		var songName = $("#song-title2").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+	function listen3(){
+		console.log("enter listen");
+		var songName = $("#song-title3").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+	function listen4(){
+		console.log("enter listen");
+		var songName = $("#song-title4").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+	function listen5(){
+		console.log("enter listen");
+		var songName = $("#song-title5").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+	function listen6(){
+		console.log("enter listen");
+		var songName = $("#song-title6").html();
+		console.log(songName);
+		if(songName != "Song")
+			searchSong(songName);
+	}
+
+	// 选择情感表达模式按钮
+	$(".checked-switch").click(function () {
+		console.log("click");
+		var chartDisplay = document.getElementById("chart");
+		var wordDisplay = document.getElementById("word");
+		if(chartDisplay.style.display == "none"){
+			//隐藏文字显示柱状图
+			chartDisplay.style.display = "block";
+			wordDisplay.style.display = "none";
+		}
+		else{
+			//隐藏柱状图显示文字
+			chartDisplay.style.display = "none";
+			wordDisplay.style.display = "block";
+		}
+	})
+
+</script>
+</html>
